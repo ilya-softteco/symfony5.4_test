@@ -10,6 +10,10 @@
             <a href="{{ path('post.show' , {'id': post.id}) }}">{{ post.title }}</a>
         </li>
         <li>{{ post.description }}</li>
+
+        <form action="{{ path('post.delete' , {'id': post.id}) }}" method="DELETE">
+            <input type="submit" value="delete" >
+        </form>
         <br>
     {% endfor %}
 {% endblock %}

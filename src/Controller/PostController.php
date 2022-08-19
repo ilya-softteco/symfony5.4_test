@@ -51,7 +51,7 @@ class PostController extends AbstractController
     }
 
 
-    #[Route('/delete/{id}', name: 'delete', methods: [])]
+    #[Route('/delete/{id}', name: 'delete', methods: ["DELETE"])]
     public function delete(Post $post,ManagerRegistry $doctrine): Response
     {
 

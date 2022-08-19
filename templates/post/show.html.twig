@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PostController!{% endblock %}
+
+{% block body %}
+    {% if post is not empty %}
+        <li>{{ post.id }}</li>
+        <li>{{ post.title }}</li>
+    {% endif %}
+{% endblock %}

@@ -4,16 +4,38 @@
 
 {% block body %}
 
-    {% for post in posts %}
-        <li>{{ post.id }}</li>
-        <li>
-            <a href="{{ path('post.show' , {'id': post.id}) }}">{{ post.title }}</a>
-        </li>
-        <li>{{ post.description }}</li>
 
-        <form action="{{ path('post.delete' , {'id': post.id}) }}" method="DELETE">
-            <input type="submit" value="delete" >
-        </form>
-        <br>
-    {% endfor %}
+    <div class="container">
+        {{ include('post/show_success_message.html.twig') }}
+
+        <div class="list-group">
+            <a href="{{ path('post.create' ) }}" class="list-group-item list-group-item-action active">
+                Create Post
+            </a>
+        </div>
+
+
+        <table class="table table-striped">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+
+            {% for post in posts %}
+                <tr>
+                    <th scope="row">{{ post.id }}</th>
+                    <td><a href="{{ path('post.show' , {'id': post.id}) }}">{{ post.title }}</a></td>
+                    <td>{{ post.description }}</td>
+                    <td><a class="text-danger" href="{{ path('post.delete' , {'id': post.id}) }}">Delete</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

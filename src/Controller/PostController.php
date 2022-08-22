@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Form\PostType;
 use App\Repository\PostRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/post', name: 'post.')]
+#[Route('/post', name: 'post.', methods: ['GET'])]
 class PostController extends AbstractController
 {
     #[Route('/', name: 'index')]
@@ -23,56 +24,96 @@ class PostController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'create', methods: [])]
-    public function create(ManagerRegistry $doctrine): Response
+    #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
+    public function create(ManagerRegistry $doctrine, Request $request): Response
     {
-
-
         $post = new Post();
-        $post->setTitle('Title_1');
-        $post->setDescription('Description_1');
+        $form = $this->createForm(PostType::class, $post);
 
-        $entityManager = $doctrine->getManager();
-        $entityManager->persist($post);
-        $entityManager->flush();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $file = $request->files->get('post')['image'];
+            if ($file) {
+                $fileName = md5(uniqid()) . '.' . $file->guessClientExtension();
+
+                $file->move(
+                    $this->getParameter('upload_dir'),
+                    $fileName
+                );
+                $post->setImage($fileName);
+            }
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($post);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Post was added');
+        }
+
+        /*  $post->setTitle('Title_1');
+          $post->setDescription('Description_1');
+
+          $entityManager = $doctrine->getManager();
+          $entityManager->persist($post);
+          $entityManager->flush();*/
 
 
-        return new Response('Post was created');
+        return $this->render('post/create.html.twig', [
+            //'posts' => $posts,
+            'form' => $form->createView(),
+        ]);
+
+        // return $this->redirect($this->generateUrl('post.index'));
     }
 
 
-    #[Route('/show/{id}', name: 'show', methods: [])]
+    #[Route('/show/{id}', name: 'show', methods: ['GET'])]
     public function show(Post $post): Response
     {
+        $form = $this->createForm(PostType::class, $post);
+
         /*  $post = $postRepository->find($id);*/
         return $this->render('post/show.html.twig', [
             'post' => $post,
+            'form' => $form->createView(),
         ]);
     }
 
 
-    #[Route('/delete/{id}', name: 'delete', methods: ["DELETE"])]
-    public function delete(Post $post,ManagerRegistry $doctrine): Response
+    #[Route('/delete/{id}', name: 'delete')]
+    public function delete(Post $post, ManagerRegistry $doctrine): Response
     {
 
         $entityManager = $doctrine->getManager();
         $entityManager->remove($post);
         $entityManager->flush();
+
+        $this->addFlash('success', 'Post was removed');
 
         return $this->redirect($this->generateUrl('post.index'));
     }
 
 
-
-    #[Route('/update/{id}', name: 'update', methods: [])]
-    public function update(Post $post,ManagerRegistry $doctrine): Response
+    #[Route('/update/{id}', name: 'update' )]
+    public function update(Post $post, ManagerRegistry $doctrine): Response
     {
-
         $entityManager = $doctrine->getManager();
-        $entityManager->remove($post);
+
+        if (!$post) {
+            throw $this->createNotFoundException(
+                'No product found for id '.$post->getId()
+            );
+        }
+
+        $post->setTitle('New product title!'.uniqid());
+        $post->setDescription('New product Description'.uniqid());
         $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('post.index'));
+        return $this->redirect($this->generateUrl('post.show',['id'=>$post->getId()]));
+
+
+
+       // return $this->redirect($this->generateUrl('post.index'));
     }
 
 

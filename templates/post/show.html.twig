@@ -4,7 +4,36 @@
 
 {% block body %}
     {% if post is not empty %}
-        <li>{{ post.id }}</li>
-        <li>{{ post.title }}</li>
+        <div class="container">
+            <table class="table table-striped">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">{{ post.id }}</th>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.description }}</td>
+                </tr>
+                </tbody>
+            </table>
+            {% if post.image     is not empty %}
+                <img src="{{ '/uploads/' ~ post.image }}">
+            {% endif %}
+
+
+            <div class="list-group">
+                <a href="{{ path('post.update' , {'id': post.id}) }}" class="my-4 list-group-item list-group-item-action active">
+                    Update Post
+                </a>
+            </div>
+
+            {{ include('post/button_all_posts.html.twig') }}
+
+        </div>
     {% endif %}
 {% endblock %}

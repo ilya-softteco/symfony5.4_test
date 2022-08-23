@@ -48,6 +48,8 @@ class PostController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Post was added');
+
+            return $this->redirect($this->generateUrl('post.index'));
         }
 
         /*  $post->setTitle('Title_1');
@@ -70,12 +72,9 @@ class PostController extends AbstractController
     #[Route('/show/{id}', name: 'show', methods: ['GET'])]
     public function show(Post $post): Response
     {
-        $form = $this->createForm(PostType::class, $post);
-
         /*  $post = $postRepository->find($id);*/
         return $this->render('post/show.html.twig', [
             'post' => $post,
-            'form' => $form->createView(),
         ]);
     }
 
@@ -83,10 +82,15 @@ class PostController extends AbstractController
     #[Route('/delete/{id}', name: 'delete')]
     public function delete(Post $post, ManagerRegistry $doctrine): Response
     {
-
         $entityManager = $doctrine->getManager();
         $entityManager->remove($post);
         $entityManager->flush();
+
+        $pathFile = $this->getParameter('upload_dir') . $post->getImage();
+
+        if (file_exists($pathFile)) {
+            unlink($pathFile);
+        }
 
         $this->addFlash('success', 'Post was removed');
 
@@ -94,26 +98,25 @@ class PostController extends AbstractController
     }
 
 
-    #[Route('/update/{id}', name: 'update' )]
+    #[Route('/update/{id}', name: 'update')]
     public function update(Post $post, ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
 
         if (!$post) {
             throw $this->createNotFoundException(
-                'No product found for id '.$post->getId()
+                'No product found for id ' . $post->getId()
             );
         }
 
-        $post->setTitle('New product title!'.uniqid());
-        $post->setDescription('New product Description'.uniqid());
+        $post->setTitle('New product title!' . uniqid());
+        $post->setDescription('New product Description' . uniqid());
         $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('post.show',['id'=>$post->getId()]));
+        return $this->redirect($this->generateUrl('post.show', ['id' => $post->getId()]));
 
 
-
-       // return $this->redirect($this->generateUrl('post.index'));
+        // return $this->redirect($this->generateUrl('post.index'));
     }
 
 

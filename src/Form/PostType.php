@@ -24,7 +24,6 @@ class PostType extends AbstractType
             ])
             ->add('save', SubmitType::class, ['attr' => [
                 'class' => 'my-3 btn-primary',
-
             ]],
 
             )

@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StatusController extends AbstractController
 {
-    #[Route('/', name: 'alls', methods: ['GET'])]
+    #[Route('/', name: 'all', methods: ['GET'])]
     public function index(StatusRepository $postRepository): Response
     {
 

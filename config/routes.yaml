@@ -1,7 +1,9 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
-trello:
-  path: /api/v1/
-  # the controller value has the format 'controller_class::method_name'
-  controller: App\Controller\Api\v1\Trello::*
+#trello:
+#  type: rest
+#  resource: App\Controller\Api\v1\Trello\DeskController
+#  prefix: /v1
+#  name_prefix: v1_
+#  defaults: {_format: json}

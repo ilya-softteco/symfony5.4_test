@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DeskController extends BaseController
+#[Route('/api/v1/', name: 'trello.')]
+class DeskController extends AbstractController
 {
-    #[Route('/desk', name: 'all', methods: ['GET'])]
+    #[Route('desk', name: 'all', methods: ['GET'])]
     public function index(DeskRepository $postRepository): Response
     {
         $desks = $postRepository->findAll();

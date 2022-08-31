@@ -3,16 +3,19 @@
 namespace App\Controller\Api\v1\Trello;
 
 use App\Controller\Api\v1\BaseController;
+use App\Repository\Trello\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/api/v1/', name: 'trello.')]
 class TaskController extends BaseController
 {
-    public function index(): Response
+    #[Route('task', name: 'app_task')]
+
+    public function index(TaskRepository $taskRepository): Response
     {
-        return $this->render('task/index.html.twig', [
-            'controller_name' => 'TaskController',
-        ]);
+        $tasks = $taskRepository->findAll();
+        return $this->json($tasks);
     }
 }
